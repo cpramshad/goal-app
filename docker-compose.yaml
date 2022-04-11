@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - local-data:/data/db
+    # environment:
+      # MONGO_INITDB_ROOT_USERNAME: ram
+      # MONGO_INITDB_ROOT_PASSWORD: secret
+      # - MONGO_INITDB_ROOT_USERNAME=ram
+      # - MONGO_INITDB_ROOT_PASSWORD=secret
+    env_file:
+      - ./env/mongo.env
+  backend:
+    build: ./backend
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile
+    #   args:
+    #     some-arg: 1
+    ports:
+      - '80:80'
+    volumes:
+      - local-logs:/app/logs # named volume
+      - ./backend:/app # bind mount
+      - /app/node_modules # anonymous volume
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      - mongodb
+  # frontend:
+
+volumes:
+  local-data:
+  local-logs:
